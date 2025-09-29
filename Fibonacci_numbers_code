@@ -1,0 +1,69 @@
+# 1. Minimumunu tapmaq istədiyimiz funksiya
+# BASIC kodunda belə idi: Z = x^4 - 14x^3 + 60x^2 - 70
+def f(x):
+    return x**4 - 14*x**3 + 60*x**2 - 70
+
+
+# 2. Fibonacci ədədlərini hesablayan funksiya
+def fibonacci_numbers(n):
+    f = [1, 1]   # ilk iki Fibonacci ədədi: F(0)=1, F(1)=1
+    for i in range(2, n+1):              # 2-dən başlayıb n-ə qədər hesablayırıq
+        f.append(f[i-1] + f[i-2])        # qayda: F(i) = F(i-1) + F(i-2)
+    return f
+
+
+# 3. Fibonacci Search alqoritmi
+def fibonacci_search(a, b, epsilon, N):
+    """
+    a, b     -> başlanğıc interval
+    epsilon  -> dəqiqlik (intervalın nə qədər kiçilməsini istəyirik)
+    N        -> neçə Fibonacci addımı aparılacaq
+    """
+
+    # Fibonacci ədədlərini hesabla
+    F = fibonacci_numbers(N)
+
+    # Başlanğıc intervalın ucları
+    x1 = a
+    x3 = b
+
+    # İlk orta nöqtə (Fibonacci düsturuna görə)
+    x2 = a + ((b - a) * F[N-1] + epsilon * ((-1)**N)) / F[N]
+    f2 = f(x2)   # funksiyanın həmin nöqtədə qiyməti
+
+    print("Başlanğıc interval:", (x1, x3))
+    print("İlkin nöqtə x2 =", x2, "f(x2) =", f2)
+
+    # Dövr – N-2 dəfə işləyəcək
+    for k in range(1, N-1):
+        # Yeni nöqtə x4 Fibonacci düsturuna görə
+        x4 = a + ((b - a) * F[N-k-1] + epsilon * ((-1)**(N-k))) / F[N-k]
+        f4 = f(x4)   # funksiyanın həmin nöqtədə qiyməti
+
+        # Funksiya qiymətlərini müqayisə edirik
+        if f2 <= f4:
+            b = x4      # minimum sol tərəfdədir → sağ sərhəd dəyişir
+        else:
+            a = x2      # minimum sağ tərəfdədir → sol sərhəd dəyişir
+            f2 = f4     # f2-ni yeniləyirik
+
+        # İndiki orta nöqtə artıq x4 olur
+        x2 = x4
+
+        # Cari intervalı çap edirik
+        print(f"Addım {k}: Yeni interval = ({a}, {b})")
+
+    # Sonda interval çox kiçilir → minimum təqribən ortadadır
+    x_min = (a + b) / 2
+    print("Təqribi minimum nöqtə:", x_min)
+    print("Funksiya qiyməti f(x) =", f(x_min))
+    return x_min
+
+
+# 4. İstifadəçi girişləri (terminaldan soruşuruq)
+epsilon = float(input("Epsilon (dəqiqlik) dəyərini daxil edin: "))
+a = float(input("Intervalın başlanğıcı (a): "))
+b = float(input("Intervalın sonu (b): "))
+
+# 5. Axtarışı işə salırıq (N=10 Fibonacci addımı kimi götürək)
+fibonacci_search(a, b, epsilon, N=10)
